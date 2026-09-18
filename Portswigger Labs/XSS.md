@@ -1,3 +1,4 @@
+[xss-notes (1).md](https://github.com/user-attachments/files/32389531/xss-notes.1.md)
 # Cross-Site Scripting (XSS) Notes
 
 Notes on XSS types and hands-on DOM XSS lab walkthroughs (PortSwigger).
@@ -42,6 +43,27 @@ The payload **never meaningfully touches server-side rendering logic**. It's pro
   ```
 - **Takeaway:** Reflection ≠ vulnerability by itself — always verify whether encoding/sanitization is actually applied before the payload lands in the DOM.
 
----
+### Lab 3 — `javascript:` URI Context
+- Context: executing JavaScript through an HTML attribute or a URL (e.g. a link/redirect field) rather than directly in the DOM.
+- **Payload used:**
+  ```
+  javascript:alert(document.cookie)
+  ```
+- **Takeaway:** When a sink accepts a URL (`href`, `src`, redirect params, etc.), the `javascript:` pseudo-protocol can be used to execute script directly from that context.
 
-*Notes compiled during ongoing web application security / XSS study (PortSwigger labs).*
+### Lab 4 — Delivering the Exploit URL via Nested `iframe`
+- The lab's goal is to deliver a malicious URL that triggers the exploit when visited (client-side exploit delivery, not just proving alert()).
+- **Payload used:**
+  ```html
+  <iframe src="https://0ae800fd0328b51881cfb195006000e5.web-security-academy.net/#" onload="this.src+='<img src=x onerror=print()>'"></iframe>
+  ```
+- **Takeaway:** An `iframe` can load the vulnerable page and, on `onload`, append a secondary payload to its `src` (e.g. via the URL fragment) — useful when the vulnerable sink reads from `location.hash` and needs the final exploit delivered as one shareable URL.
+
+### Lab 5 — Bypassing Angle-Bracket Encoding
+- Observed that `<` and `>` were being HTML-encoded, so any payload using `<script>` or `<img>` tags would fail.
+- Solution: break out of an existing HTML attribute using only quotes and an event handler — no angle brackets needed.
+- **Payload used:**
+  ```
+  " onmouseover="alert(1)
+  ```
+- **Takeaway:** When angle brackets are encoded/filtered but the input still lands inside an existing HTML tag's attribute, closing the attribute with `"` and adding a new event handler (`onmouseover`, `onfocus`, etc.) can still achieve execution without needing `<` or `>` at all.
