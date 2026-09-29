@@ -97,7 +97,7 @@
 - The payload is: `'; alert(1); var foo='` (taken from *The Web Application Hacker's Handbook*).
 - The HTML encoding is done by the `encodeURIComponent()` component, which doesn't encode the following characters: basic letters (`A-Z`, `a-z`), numbers (`0-9`), or a few special symbols (`-`, `_`, `.`, `!`, `~`, `*`, `'`, `(`, `)`). So the payload is crafted around these characters.
 
-## Lab 11 (Practitioner 1) - DOM XSS in document.write sink using source location.search inside a select element
+## Lab 10 (Practitioner 1) - DOM XSS in document.write sink using source location.search inside a select element
 
 - The problem statement states that the vulnerability is in `storeId`.
 - Initially it's not given in the URL, but it clearly appeared in Burp Suite, so using that, I appended it to the URL.
@@ -107,7 +107,7 @@
     /><script>alert(1)</script>
     ```
 
-## Lab 12 (Practitioner 2) - DOM XSS in AngularJS expression with angle brackets and double quotes HTML-encoded
+## Lab 11 (Practitioner 2) - DOM XSS in AngularJS expression with angle brackets and double quotes HTML-encoded
 
 - The problem statement says to exploit using an AngularJS expression.
 - It also says the quotes and angle brackets are encoded, so an equivalent payload would be `javascript:alert(1)`.
