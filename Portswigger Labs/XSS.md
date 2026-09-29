@@ -118,5 +118,22 @@
     ```input
     {{constructor.constructor('alert(1)')()}}
     ```
+    
+### Lab 12 — # Lab: Stored DOM XSS
 
+- By looking into javascript i can see that there is a function "replace" where its functionality is to replace < with &lt and > with &gt.
+- i tried with basic payload : `<script>alert(1)</script>` and posted it and it is reflected as `<script>alert(1)`. which clearly means the </script> tag is getting sanitised.
+- firing up burp and seeing the response in it tells me that there is a backslash in that script tag which makes it <\/script>.(story of other)
+- so i just randomly entered two payloads like this : 
+  `<script>alert(1)</script><img src=x onerror=alert(1)>` and magically it got worked i don't know how.
+- Digging down, got to know that replace function works only on single string that mean it just replaces only first script tag's angular brackets which makes it to execute the second payload successfully.
+  
+### Lab 13 — #   Reflected XSS into HTML context with most tags and attributes blocked
+
+- The lab description says that there is a WAF that blocks the regular xss injection tags
+- so i remember that somewhere i read about encrypting the tags and injection can bypass a WAF.
+- so i tried to HTML encode the payloads and put that in search bar, even though that bypassed the WAF the payload is ineffective as it was considered as a literal string.
+- going through some reports says that should search for tags and attributes that are allowed which says <body onresize=> are allowed which reminds of tag `<iframe>`
+- so crafted a payload with iframe using claude which gave me : `<iframe src="https://0a13006303d041fd800721c600740014.web-security-academy.net/?search=%22%3E%3Cbody%20onresize=print()%3E" onload="this.style.width='100px'"></iframe>`
+- as lab says there should be no user interaction this is delivered through exploit server body section, and lab gets solved.
 
