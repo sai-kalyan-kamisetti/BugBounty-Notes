@@ -128,12 +128,30 @@
   `<script>alert(1)</script><img src=x onerror=alert(1)>` and magically it got worked i don't know how.
 - Digging down, got to know that replace function works only on single string that mean it just replaces only first script tag's angular brackets which makes it to execute the second payload successfully.
   
-### Lab 13 — #   Reflected XSS into HTML context with most tags and attributes blocked
+### Lab 13 — # Reflected XSS into HTML context with most tags and attributes blocked
 
 - The lab description says that there is a WAF that blocks the regular xss injection tags
 - so i remember that somewhere i read about encrypting the tags and injection can bypass a WAF.
 - so i tried to HTML encode the payloads and put that in search bar, even though that bypassed the WAF the payload is ineffective as it was considered as a literal string.
 - going through some reports says that should search for tags and attributes that are allowed which says <body onresize=> are allowed which reminds of tag `<iframe>`
+
+### Lab 14 — # Reflected XSS into HTML Context with All Tags Blocked Except Custom Ones
+ 
+- Googling payloads with custom tags gave me the idea of:
+```html
+    <xss id=x onfocus=alert(document.cookie) tabindex=1>
+```
+ 
+- For the alert to trigger on load, a `#` is appended to the URL.
+- Tried putting it in an iframe like the previous lab, but it didn't work, just like yesterday.
+- Tried with a `<script>` tag and `location`, and with detailed processing of the URL, it bypassed the filter.
+- **Final payload:**
+```html
+    <script>
+    location = 'https://0ad900a9042951ea806c127f00b100e1.web-security-academy.net/?search=%3Cxss+id%3Dx+onfocus%3Dalert%28document.cookie%29%20tabindex=1%3E#x';
+    </script>
+```
+ 
 - so crafted a payload with iframe using claude which gave me : `<iframe src="https://0a13006303d041fd800721c600740014.web-security-academy.net/?search=%22%3E%3Cbody%20onresize=print()%3E" onload="this.style.width='100px'"></iframe>`
 - as lab says there should be no user interaction this is delivered through exploit server body section, and lab gets solved.
 
